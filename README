@@ -1,0 +1,18 @@
+hovercard
+Author: Prahsant Chaudhary (http://designwithpc.com)
+Plugin Demos & Documentation: http://designwithpc.com/Plugins/Hovercard
+
+About this plugin:
+A free light weight jQuery plugin that enables you to display related information with the hovered label, link, or any html element of your choice.
+
+Features include:
+
+Smoothly fades the name into a hovered card (in place).
+Uses minimum css and no external stylesheets to download.
+Full control over html to be displayed.
+Comes with built in Twitter and Facebook hovercard.
+Supports callback functions on hover in and hover out.
+Auto adjust on the edges of viewport.
+
+When should you use hovercard:
+A hovercard comes handy when displaying Person bio, Book author and price, Loading related information with Ajax, Editing in place, and what not! Check out the following demos to see some of this stuff in action :)
