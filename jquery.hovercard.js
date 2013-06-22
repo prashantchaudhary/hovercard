@@ -114,8 +114,17 @@
                 hcImg = '<img class="hc-pic" src="' + options.cardImgSrc + '" />';
             }
 
+            //Determine if detailsHTML is a callable function
+            var detailsHTML = '';
+            if($.isFunction(options.detailsHTML)){
+                //if so, call the function with the current object as the "this" value and argument, and update detailsHTML
+                detailsHTML = options.detailsHTML.call(obj, obj);
+            }else{
+                detailsHTML = options.detailsHTML;
+            }
+
             //generate details span with html provided by the user
-            var hcDetails = '<div class="hc-details" >' + hcImg + options.detailsHTML + '</div>';
+            var hcDetails = '<div class="hc-details" >' + hcImg + detailsHTML + '</div>';
 
             //append this detail after the selected element
             obj.after(hcDetails);
