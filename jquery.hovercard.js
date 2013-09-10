@@ -1,46 +1,46 @@
-﻿//Title: Hovercard plugin by PC 
+//Title: Hovercard plugin by PC
 //Documentation: http://designwithpc.com/Plugins/Hovercard
-//Author: PC 
+//Author: PC
 //Website: http://designwithpc.com
 //Twitter: @chaudharyp
-//
-//Version 1.0 Aug 31st 2011 -First Release.
-//Version 1.1 Sep 29th 2011 
-//Bug fixed: When using hovercard in hovercard, the inner hovercard shows up as well when parent hovercard opens.
-//
-//Version 1.2 Sep 30th 2011
-//Enhancement: The hovercard now adjust (either open on left or right) in accordance to the view port.
-//Added options:
-//openOnLeft: force hovercard to open on left. (eg: if the hovered name appear in the end of sentence)
-//
-//Version 2.0 Nov 8th 2011
-//Bug Fixes: zindex issue.
-//Enhancements: Supercool built in social profile cards like Twitter and Facebook!
-//Added options:
-//showTwitterCard: displays a built in twitter card format for a twitter screenname. Maximum 150 twitter lookup per hour.
-//twitterScreenName: twitter screen name for the hovercard. If no username/screenname is provided, hovercard attempts to look up for hovered text.
-//showFacebookCard: displays a built in facebook card format for a facebook username/pages/events etc. Works best with Facebook pages.
-//facebookUserName: facebook username/pages/events/groups for the hovercard. If no username is provided, hovercard attempts to look up for hovered text.
-//
-//Version 2.1 Nov 22nd 2011
-//Enhancement: attribute 'data-hovercard'. You may now use data-hovercard attribute with your label/link etc to set the twitter or facebook usernames.
-//Added options:
-//showCustomCard: You may now add your own custom data source and display the profile data using existing card format.
-//
-//Version 2.2 Dec 9th 2011
-//Bug Fixes: zindex issue with IE7.
-//
-//Version 2.3 Dec 15th 2011
-//Enhancement: The plugin now auto adjust on the edges of visible window/viewport!
-//Added options:
-//openOnTop: Set 'openOnTop' to true if you want the hovercard to always open on left.
-//customCardJSON: Provide a local json data with showCustomCard. Inherits plugin's social card format/styles.
-//delay: Delay the hovercard appearance on hover.
-//
-//Version 2.4 Apr 12th 2012
-//Added options:
-//autoAdjust: The plugin's default functionality to auto adjust to the viewport edges can now be overridden.
 
+-//Version 1.0 Aug 31st 2011 -First Release.
+-//Version 1.1 Sep 29th 2011 
+-//Bug fixed: When using hovercard in hovercard, the inner hovercard shows up as well when parent hovercard opens.
+-//
+-//Version 1.2 Sep 30th 2011
+-//Enhancement: The hovercard now adjust (either open on left or right) in accordance to the view port.
+-//Added options:
+-//openOnLeft: force hovercard to open on left. (eg: if the hovered name appear in the end of sentence)
+-//
+-//Version 2.0 Nov 8th 2011
+-//Bug Fixes: zindex issue.
+-//Enhancements: Supercool built in social profile cards like Twitter and Facebook!
+-//Added options:
+-//showTwitterCard: displays a built in twitter card format for a twitter screenname. Maximum 150 twitter lookup per hour.
+-//twitterScreenName: twitter screen name for the hovercard. If no username/screenname is provided, hovercard attempts to look up for hovered text.
+-//showFacebookCard: displays a built in facebook card format for a facebook username/pages/events etc. Works best with Facebook pages.
+-//facebookUserName: facebook username/pages/events/groups for the hovercard. If no username is provided, hovercard attempts to look up for hovered text.
+-//
+-//Version 2.1 Nov 22nd 2011
+-//Enhancement: attribute 'data-hovercard'. You may now use data-hovercard attribute with your label/link etc to set the twitter or facebook usernames.
+-//Added options:
+-//showCustomCard: You may now add your own custom data source and display the profile data using existing card format.
+-//
+-//Version 2.2 Dec 9th 2011
+-//Bug Fixes: zindex issue with IE7.
+-//
+-//Version 2.3 Dec 15th 2011
+-//Enhancement: The plugin now auto adjust on the edges of visible window/viewport!
+-//Added options:
+-//openOnTop: Set 'openOnTop' to true if you want the hovercard to always open on left.
+-//customCardJSON: Provide a local json data with showCustomCard. Inherits plugin's social card format/styles.
+-//delay: Delay the hovercard appearance on hover.
+-//
+-//Version 2.4 Apr 12th 2012
+-//Added options:
+-//autoAdjust: The plugin's default functionality to auto adjust to the viewport edges can now be overridden.
+-
 
 (function ($) {
     $.fn.hovercard = function (options) {
@@ -61,6 +61,8 @@
             customDataUrl: '',
             background: "#ffffff",
             delay: 0,
+            showDelay: 400,
+            showType: "fade",
             autoAdjust: true,
             onHoverIn: function () { },
             onHoverOut: function () { }
@@ -114,8 +116,17 @@
                 hcImg = '<img class="hc-pic" src="' + options.cardImgSrc + '" />';
             }
 
+            //Determine if detailsHTML is a callable function
+            var detailsHTML = '';
+            if($.isFunction(options.detailsHTML)){
+                //if so, call the function with the current object as the "this" value and argument, and update detailsHTML
+                detailsHTML = options.detailsHTML.call(obj, obj);
+            }else{
+                detailsHTML = options.detailsHTML;
+            }
+
             //generate details span with html provided by the user
-            var hcDetails = '<div class="hc-details" >' + hcImg + options.detailsHTML + '</div>';
+            var hcDetails = '<div class="hc-details" >' + hcImg + detailsHTML + '</div>';
 
             //append this detail after the selected element
             obj.after(hcDetails);
@@ -132,8 +143,13 @@
                 obj.css("zIndex", "100").find('.hc-details').css("zIndex", "50");
 
                 var curHCDetails = $this.find(".hc-details").eq(0);
-                curHCDetails.stop(true, true).delay(options.delay).fadeIn();
-
+                if(options.showType == "fade"){
+                    curHCDetails.stop(true, true).delay(options.delay).fadeIn(options.showDelay);
+                } else if(options.showType == "slide"){
+                    curHCDetails.stop(true, true).delay(options.delay).slideDown(options.showDelay);
+                } else {
+                    curHCDetails.stop(true, true).delay(options.delay).show(options.showDelay);
+                }
 
                 //Default functionality on hoverin, and also allows callback
                 if (typeof options.onHoverIn == 'function') {
@@ -180,22 +196,30 @@
                         LoadSocialProfile("facebook", fbUsername, curHCDetails);
                     }
 
-                    //Callback function                    
+                    //Callback function
                     options.onHoverIn.call(this);
                 }
 
             }, function () {
-                //Undo the z indices 
+                //Undo the z indices
                 $this = $(this);
 
-                $this.find(".hc-details").eq(0).stop(true, true).fadeOut(300, function () {
+                var callbackFn = function () {
                     $this.css("zIndex", "0");
                     obj.css("zIndex", "0").find('.hc-details').css("zIndex", "0");
 
                     if (typeof options.onHoverOut == 'function') {
                         options.onHoverOut.call(this);
                     }
-                });
+                }
+
+                if(options.showType == "fade"){
+                    $this.find(".hc-details").eq(0).stop(true, true).fadeOut(options.showDelay, callbackFn);
+                } else if(options.showType == "slide"){
+                    $this.find(".hc-details").eq(0).stop(true, true).slideUp(options.showDelay, callbackFn);
+                } else {
+                    $this.find(".hc-details").eq(0).stop(true, true).hide(options.showDelay, callbackFn);
+                }
             });
 
             //Opening Directions adjustment
@@ -344,7 +368,13 @@
                                 curHCDetails.find('.s-message').remove();
                                 curHCDetails.prepend(cardHTML(data));
                                 adjustToViewPort(curHCDetails.closest('.hc-preview'));
-                                curHCDetails.stop(true, true).delay(options.delay).fadeIn();
+                                if(options.showType == "fade"){
+                                    curHCDetails.stop(true, true).delay(options.delay).fadeIn(options.showDelay);
+                                } else if(options.showType == "slide"){
+                                    curHCDetails.stop(true, true).delay(options.delay).slideDown(options.showDelay);
+                                } else {
+                                    curHCDetails.stop(true, true).delay(options.delay).show(options.showDelay);
+                                }
                                 customCallback(data);
                             }
                         },
