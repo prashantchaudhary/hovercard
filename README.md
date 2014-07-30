@@ -78,6 +78,7 @@ Hovercard comes handy while displaying:
 Author & Credits:
 -----------------
 [Prahsant Chaudhary][3]
+
 An Entrepreneur, Web Developer and Co-founder [MrRightIndia][4] and [Kaaryaa][5].
 
   [1]: http://designwithpc.com/Plugins/Hovercard
